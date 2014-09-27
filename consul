@@ -8,12 +8,10 @@
 # - support for basic options (i.e.. -debug)
 # - support for complex options (i.e. -parallel=[true|false]
 #
-# The scirpt has been successfully tested with consul-0.3.0 and the
+# The scirpt has been successfully tested with consul-0.4.0 and the
 # following OS:
 #
-# - OS X 10.9
-# - CentOS-6.5
-# - Ubuntu 12.04 Server
+# - Ubuntu 14.04
 #
 # The script technically is heavily inspired by the git-completion.bash
 # script. Kudos to Shawn O. Pearce <spearce@spearce.org> and all other
@@ -67,12 +65,32 @@ __consul_agent ()
 			return
 			;;
         -*)
-            __consulcomp "--help -advertise= -bootstrap -bind= -client= -config-file= -config-dir= -data-dir= -dc= -join= -log-level= -node= -protocol= -rejoin -server -syslog -ui-dir= -pid-file="
+            __consulcomp "--help -advertise= -bootstrap -bind= -bootstrap-expect= -client= -config-file= -config-dir= -data-dir= -dc= -encrypt= -join= -log-level= -node= -protocol= -rejoin -server -syslog -ui-dir= -pid-file="
             return
             ;;
         *)
     esac
+}
 
+__consul_event ()
+{
+    case "$cur" in
+        -*)
+            __consulcomp "--help -http-addr= -datacenter= -name= -node= -service= -tag="
+            return
+            ;;
+        *)
+    esac
+}
+__consul_exec ()
+{
+    case "$cur" in
+        -*)
+            __consulcomp "--help -http-addr= -datacenter= -prefix= -node= -service= -tag= -wait= -wait-repl= -verbose"
+            return
+            ;;
+        *)
+    esac
 }
 
 __consul_force-leave ()
@@ -167,6 +185,21 @@ __consul_reload ()
     esac
 }
 
+__consul_watch ()
+{
+    case "$cur" in
+          -passingonly=*)
+            __packercomp "false true" "${cur##-passingonly=}"
+            return
+            ;;
+      -*)
+            __consulcomp "--help -http-addr= -datacenter= -token= -key= -name= -passingonly= -prefix= -service= -state= -tag= -type="
+            return
+            ;;
+        *)
+    esac
+}
+
 # Main function for consul completion.
 #
 # Searches for a command in $COMP_WORDS. If one is found
@@ -199,7 +232,7 @@ _consul_completion ()
                 ;;
             *)
 
-                __consulcomp "agent force-leave help info join keygen leave members monitor reload version"
+                __consulcomp "agent event exec force-leave help info join keygen leave members monitor reload version watch"
                 ;;
         esac
         return
